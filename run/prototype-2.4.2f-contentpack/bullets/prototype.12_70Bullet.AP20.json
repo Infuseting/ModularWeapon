@@ -1,0 +1,9 @@
+{
+  "internalName": "prototype.12_70Bullet.AP20",
+  "maxStackSize": 20,
+  "displayName": "12/70 Slug AP-20",
+  "renderBulletModel": true,
+  "shellSound": "casing_gauge",
+  "shellModelFileName": "12gauge.obj"
+  
+}

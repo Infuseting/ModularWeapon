@@ -1,0 +1,20 @@
+{
+  "internalName": "prototype.7_62x39",
+  "maxStackSize": 20,
+  "displayName": "7,62x39mm",
+  "NumberBullet": 1,
+  "DamagePerBellet": 88,
+  "Penetration": 24,
+  "ArmorDamage": 22,
+  "Precision": -5,
+  "recul": 0,
+  "HemoragieLeger": 15,
+  "HemoragieLourd": 15,
+  "BulletIn": 2,
+  "Efficacite1": 6,
+  "Efficacite2":6,
+  "Efficacite3":5,
+  "Efficacite4":4,
+  "Efficacite5":4,
+  "Efficacite6":4
+}

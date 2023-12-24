@@ -1,0 +1,50 @@
+.home {
+    background-image: url("modularwarfare:textures/gui/back_all.png");
+    width: 1920px;
+    height: 1080px;
+}
+.tete{
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 400px;
+    height: 40px;
+    left: 790px;
+    top: 89px;
+}
+.Body{
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 400px;
+    height: 40px;
+    left: 790px;
+    top: 245px;
+}
+.LeftArm{
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 400px;
+    height: 40px;
+    left: 790px;
+    top: 401px;
+}
+.RightArm{
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 400px;
+    height: 40px;
+    left: 790px;
+    top: 557px;
+}
+.LeftLeg{
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 400px;
+    height: 40px;
+    left: 790px;
+    top: 713px;
+}
+.RightLeg{
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 400px;
+    height: 40px;
+    left: 790px;
+    top: 869px;
+}
+#buttonDisabled{
+    background-image: url("modularwarfare:textures/gui/boutondisable.png");
+}

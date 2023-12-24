@@ -1,0 +1,23 @@
+{
+  "internalName": "prototype.12_70Gauge.7",
+  "maxStackSize": 20,
+  "displayName": "12/70 Chevrotines 7 mm",
+  "renderBulletModel": true,
+  "shellSound": "casing_gauge",
+  "shellModelFileName": "12gauge.obj",
+  "NumberBullet": 8,
+  "DamagePerBellet": 39,
+  "Penetration": 3,
+  "ArmorDamage": 26,
+  "Precision": 0,
+  "recul": 0,
+  "HemoragieLeger": 0,
+  "HemoragieLourd": 0,
+  "Efficacite1": 3,
+  "Efficacite2":3,
+  "Efficacite3":3,
+  "Efficacite4":3,
+  "Efficacite5":3,
+  "Efficacite6":3
+  
+}

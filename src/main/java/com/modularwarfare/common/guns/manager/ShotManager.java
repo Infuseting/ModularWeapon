@@ -1,0 +1,211 @@
+package com.modularwarfare.common.guns.manager;
+
+import com.modularwarfare.ModConfig;
+import com.modularwarfare.ModularWarfare;
+import com.modularwarfare.api.WeaponFireEvent;
+import com.modularwarfare.api.WeaponHitEvent;
+import com.modularwarfare.client.ClientProxy;
+import com.modularwarfare.client.ClientRenderHooks;
+import com.modularwarfare.client.handler.ClientTickHandler;
+import com.modularwarfare.common.armor.ArmorType;
+import com.modularwarfare.common.armor.ItemSpecialArmor;
+import com.modularwarfare.common.capability.extraslots.CapabilityExtra;
+import com.modularwarfare.common.capability.extraslots.IExtraItemHandler;
+import com.modularwarfare.common.entity.EntityExplosiveProjectile;
+import com.modularwarfare.common.entity.decals.EntityShell;
+import com.modularwarfare.common.entity.grenades.EntityGrenade;
+import com.modularwarfare.common.guns.*;
+import com.modularwarfare.common.handler.ServerTickHandler;
+import com.modularwarfare.common.hitbox.hits.BulletHit;
+import com.modularwarfare.common.hitbox.hits.OBBHit;
+import com.modularwarfare.common.hitbox.hits.PlayerHit;
+import com.modularwarfare.common.hitbox.maths.EnumHitboxType;
+import com.modularwarfare.common.network.*;
+import com.modularwarfare.utility.MWSound;
+import com.modularwarfare.utility.ModularDamageSource;
+import com.modularwarfare.utility.RayUtil;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ShotManager {
+    public static boolean defemptyclickLock=true;
+
+    public static void fireClient(EntityPlayer entityPlayer, World world, ItemStack gunStack, ItemGun itemGun, WeaponFireMode fireMode) {
+        GunType gunType = itemGun.type;
+        
+        if (gunType.allowReloadFiring && ClientRenderHooks.getEnhancedAnimMachine(entityPlayer).reloading) {
+            ClientRenderHooks.getEnhancedAnimMachine(entityPlayer).stopReload();
+            ClientRenderHooks.getEnhancedAnimMachine(entityPlayer).reset();
+            ClientRenderHooks.getEnhancedAnimMachine(entityPlayer).updateCurrentItem();
+        }
+        
+        // Can fire checks
+        if (!checkCanFireClient(entityPlayer, world, gunStack, itemGun, fireMode)) {
+            return;
+        }
+
+        int shotCount = fireMode == WeaponFireMode.BURST ? gunStack.getTagCompound().getInteger("shotsremaining") > 0 ? gunStack.getTagCompound().getInteger("shotsremaining") : gunType.numBurstRounds : 1;
+
+        // Weapon pre fire event
+        WeaponFireEvent.PreClient preFireEvent = new WeaponFireEvent.PreClient(entityPlayer, gunStack, itemGun, gunType.weaponMaxRange);
+        MinecraftForge.EVENT_BUS.post(preFireEvent);
+        if (preFireEvent.isCanceled())
+            return;
+
+        if (preFireEvent.getResult() == Event.Result.DEFAULT || preFireEvent.getResult() == Event.Result.ALLOW) {
+            if (!ItemGun.hasNextShot(gunStack)) {
+                if (fireMode == WeaponFireMode.BURST) gunStack.getTagCompound().setInteger("shotsremaining", 0);
+                if(defemptyclickLock) {
+                    //((ClientProxy)ModularWarfare.PROXY).playSound(new MWSound(entityPlayer.getPosition(), "defemptyclick", 1.0f, 1.0f));
+                    gunType.playClientSound(entityPlayer, WeaponSoundType.DryFire);
+                    ModularWarfare.PROXY.onShootFailedAnimation(entityPlayer, gunType.internalName);
+                    defemptyclickLock=false;
+                }
+                return;
+            }
+        }
+
+        ModularWarfare.PROXY.onShootAnimation(entityPlayer, gunType.internalName, gunType.fireTickDelay, itemGun.type.recoilPitch, itemGun.type.recoilYaw);
+
+        // Sound
+        if (GunType.getAttachment(gunStack, AttachmentPresetEnum.Barrel) != null) {
+            ItemAttachment barrelAttachment = (ItemAttachment) GunType.getAttachment(gunStack, AttachmentPresetEnum.Barrel).getItem();
+            if (barrelAttachment.type.barrel.isSuppressor) {
+                gunType.playClientSound(entityPlayer, WeaponSoundType.FireSuppressed);
+            } else {
+                gunType.playClientSound(entityPlayer, WeaponSoundType.Fire);
+            }
+        } else if (GunType.isPackAPunched(gunStack)) {
+            gunType.playClientSound(entityPlayer, WeaponSoundType.Punched);
+            gunType.playClientSound(entityPlayer, WeaponSoundType.Fire);
+        } else {
+            gunType.playClientSound(entityPlayer, WeaponSoundType.Fire);
+        }
+
+        if (gunType.weaponType == WeaponType.BoltSniper || gunType.weaponType == WeaponType.Shotgun) {
+            gunType.playClientSound(entityPlayer, WeaponSoundType.Pump);
+        }
+
+        // Burst Stuff
+        if (fireMode == WeaponFireMode.BURST) {
+            shotCount = shotCount - 1;
+            gunStack.getTagCompound().setInteger("shotsremaining", shotCount);
+        }
+
+        ClientTickHandler.playerShootCooldown.put(entityPlayer.getUniqueID(), gunType.fireTickDelay);
+
+
+        if ((gunType.dropBulletCasing)) {
+            /**
+             * Drop casing
+             */
+            int numBullets = gunType.numBullets;
+            ItemBullet bulletItem = ItemGun.getUsedBullet(gunStack, gunType);
+            if (bulletItem != null) {
+                if (bulletItem.type.isSlug) {
+                    numBullets = 1;
+                }
+            }
+
+            EntityShell shell = new EntityShell(world, entityPlayer,gunStack, itemGun, bulletItem);
+
+            shell.setHeadingFromThrower(entityPlayer, entityPlayer.rotationPitch, entityPlayer.rotationYaw + 110, 0.0F, 0.2F, 5);
+            world.spawnEntity(shell);
+        }
+
+        ItemGun.consumeShot(gunStack);
+
+        /**
+         * Hit Register
+         */
+        /*
+        if (!ModConfig.INSTANCE.shots.client_sided_hit_registration || gunType.weaponType == WeaponType.Launcher) {
+            ModularWarfare.NETWORK.sendToServer(new PacketGunFire(gunType.internalName, gunType.fireTickDelay, gunType.recoilPitch, gunType.recoilYaw, gunType.recoilAimReducer, gunType.bulletSpread, entityPlayer.rotationPitch, entityPlayer.rotationYaw));
+        } else {
+            fireClientSide(entityPlayer, itemGun);
+        }
+        */
+        fireClientSide(entityPlayer, itemGun);
+    }
+    
+    public static boolean checkCanFireClient(EntityPlayer entityPlayer, World world, ItemStack gunStack, ItemGun itemGun, WeaponFireMode fireMode) {
+        if(itemGun.type.animationType==WeaponAnimationType.BASIC) {
+            if(ItemGun.isClientReloading(entityPlayer)) {
+                return false;
+            }
+        }
+        if (ItemGun.isOnShootCooldown(entityPlayer.getUniqueID())
+                || ClientRenderHooks.getAnimMachine(entityPlayer).attachmentMode
+                || (!itemGun.type.allowSprintFiring && entityPlayer.isSprinting())
+                || !itemGun.type.hasFireMode(fireMode)) {
+            return false;
+        }
+        if (ClientProxy.gunEnhancedRenderer.controller != null) {
+            if(!ClientProxy.gunEnhancedRenderer.controller.isCouldShoot()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void fireClientSide(EntityPlayer entityPlayer, ItemGun itemGun){
+        if (entityPlayer.world.isRemote) {
+            List<Entity> entities = new ArrayList();
+            int numBullets = itemGun.type.numBullets;
+            ItemBullet bulletItem = ItemGun.getUsedBullet(entityPlayer.getHeldItemMainhand(), itemGun.type);
+            if (bulletItem != null) {
+                if (bulletItem.type.isSlug) {
+                    numBullets = 1;
+                }
+            }
+            ArrayList<BulletHit> rayTraceList = new ArrayList<BulletHit>();
+            for (int i = 0; i < numBullets; i++) {
+                BulletHit rayTrace = RayUtil.standardEntityRayTrace(Side.CLIENT, entityPlayer.world, entityPlayer.rotationPitch, entityPlayer.rotationYaw, entityPlayer, itemGun.type.weaponMaxRange, itemGun, false);
+                rayTraceList.add(rayTrace);
+            }
+
+            ModularWarfare.NETWORK.sendToServer(new PacketExpShot(entityPlayer.getEntityId(), itemGun.type.internalName));
+
+            boolean headshot = false;
+            for (BulletHit rayTrace : rayTraceList) {
+                if (rayTrace instanceof OBBHit) {
+                    final EntityLivingBase victim = ((OBBHit) rayTrace).entity;
+                    if (victim != null) {
+                        if (!victim.isDead && victim.getHealth() > 0.0f) {
+                            entities.add(victim);
+                            //Send server player hit + hitbox
+                            entityPlayer.sendMessage(new TextComponentString(((OBBHit) rayTrace).box.name));
+                            ModularWarfare.NETWORK.sendToServer(new PacketExpGunFire(victim.getEntityId(), itemGun.type.internalName, ((OBBHit) rayTrace).box.name, itemGun.type.fireTickDelay, itemGun.type.recoilPitch, itemGun.type.recoilYaw, itemGun.type.recoilAimReducer, itemGun.type.bulletSpread, rayTrace.rayTraceResult.hitVec.x, rayTrace.rayTraceResult.hitVec.y, rayTrace.rayTraceResult.hitVec.z));
+                        }
+                    }
+                } else {
+                    if (rayTrace.rayTraceResult != null) {
+                        if (rayTrace.rayTraceResult.hitVec != null) {
+                            if(rayTrace.rayTraceResult.entityHit != null){
+                                //Normal entity hit
+                                ModularWarfare.NETWORK.sendToServer(new PacketExpGunFire(rayTrace.rayTraceResult.entityHit.getEntityId(), itemGun.type.internalName, "", itemGun.type.fireTickDelay, itemGun.type.recoilPitch, itemGun.type.recoilYaw, itemGun.type.recoilAimReducer, itemGun.type.bulletSpread, rayTrace.rayTraceResult.hitVec.x, rayTrace.rayTraceResult.hitVec.y, rayTrace.rayTraceResult.hitVec.z));
+                            } else {
+                                //Crack hit block packet
+                                ModularWarfare.NETWORK.sendToServer(new PacketExpGunFire(-1, itemGun.type.internalName, "", itemGun.type.fireTickDelay, itemGun.type.recoilPitch, itemGun.type.recoilYaw, itemGun.type.recoilAimReducer, itemGun.type.bulletSpread, rayTrace.rayTraceResult.hitVec.x, rayTrace.rayTraceResult.hitVec.y, rayTrace.rayTraceResult.hitVec.z,rayTrace.rayTraceResult.sideHit));                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

@@ -1,0 +1,23 @@
+{
+  "internalName": "prototype.12_70Gauge.6_5",
+  "maxStackSize": 20,
+  "displayName": "12/70 Chevrotines 6,5 mm \"Express\"",
+  "renderBulletModel": true,
+  "shellSound": "casing_gauge",
+  "shellModelFileName": "12gauge.obj",
+  "NumberBullet": 9,
+  "DamagePerBellet": 35,
+  "Penetration": 3,
+  "ArmorDamage": 26,
+  "Precision": 15,
+  "recul": 0,
+  "HemoragieLeger": 0,
+  "HemoragieLourd": 0,
+  "Efficacite1": 6,
+  "Efficacite2":6,
+  "Efficacite3":6,
+  "Efficacite4":5,
+  "Efficacite5":5,
+  "Efficacite6":5
+  
+}

@@ -1,0 +1,8 @@
+{
+  "internalName": "prototype.12_70Bullet.Grizzly",
+  "maxStackSize": 20,
+  "displayName": "12/70 Slug Grizzly 40",
+  "renderBulletModel": true,
+  "shellSound": "casing_gauge",
+  "shellModelFileName": "12gauge.obj"
+}

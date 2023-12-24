@@ -1,0 +1,20 @@
+{
+  "internalName": "prototype.5_56x45",
+  "maxStackSize": 20,
+  "displayName": "5,56x45mm",
+  "NumberBullet": 1,
+  "DamagePerBellet": 20,
+  "Penetration": 24,
+  "ArmorDamage": 22,
+  "Precision": -5,
+  "recul": 0,
+  "HemoragieLeger": 50,
+  "HemoragieLourd": 50,
+  "BulletIn": 2,
+  "Efficacite1": 6,
+  "Efficacite2":6,
+  "Efficacite3":5,
+  "Efficacite4":4,
+  "Efficacite5":4,
+  "Efficacite6":4
+}

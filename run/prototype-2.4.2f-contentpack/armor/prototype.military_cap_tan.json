@@ -1,0 +1,20 @@
+{
+    "internalName": "prototype.military_cap_tan",
+    "defense": 0.08,
+    "ricochet": 0.50,
+    "durability": 50,
+    "armorTypes": 
+    {
+        "helmet":
+        {
+            "displayName": "Military Cap Lv.1"
+        }
+    },
+    "modelSkins":
+    [
+      {
+        "skinAsset": "prototype.military_cap_tan",
+        "displayName": "Tactical Vest - Black"
+      }
+    ]
+}

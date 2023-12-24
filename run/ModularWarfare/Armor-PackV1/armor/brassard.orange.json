@@ -1,0 +1,19 @@
+{
+    "internalName": "brassard.orange",
+    "defense": "0.15",
+    "durability": 500,
+    "armorTypes": 
+    {
+        "brassard":
+        {
+            "displayName": "Brassard"
+        }
+    },
+    "modelSkins":
+    [
+      {
+        "skinAsset": "brassard.orange",
+        "displayName": "Brassard - Default"
+      }
+    ]
+}

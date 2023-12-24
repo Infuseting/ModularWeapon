@@ -1,0 +1,19 @@
+{
+    "internalName": "prototype.tactical_helmet_lv1_black",
+    "defense": "0.25",
+    "durability": 500,
+    "armorTypes": 
+    {
+        "helmet":
+        {
+            "displayName": "Tactical Helmet Lv.1"
+        }
+    },
+    "modelSkins":
+    [
+      {
+        "skinAsset": "prototype.tactical_helmet_lv1_black",
+        "displayName": "Tactical Helmet - Black"
+      }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+  "internalName": "prototype.12_70Gauge.Flechettes",
+  "maxStackSize": 20,
+  "displayName": "12/70 Fléchettes",
+  "renderBulletModel": true,
+  "shellSound": "casing_gauge",
+  "shellModelFileName": "12gauge.obj",
+  "NumberBullet": 8,
+  "DamagePerBellet": 25,
+  "Penetration": 31,
+  "ArmorDamage": 26,
+  "Precision": -10,
+  "recul": 0,
+  "HemoragieLeger": 0,
+  "HemoragieLourd": 0,
+  "Efficacite1": 6,
+  "Efficacite2":6,
+  "Efficacite3":6,
+  "Efficacite4":5,
+  "Efficacite5":5,
+  "Efficacite6":5
+  
+  
+}

@@ -1,0 +1,19 @@
+{
+    "internalName": "helmet.Stahlhelm_M-40",
+    "defense": "0.15",
+    "durability": 500,
+    "armorTypes": 
+    {
+        "helmet":
+        {
+            "displayName": "Stahlhelm_M-40"
+        }
+    },
+    "modelSkins":
+    [
+      {
+        "skinAsset": "helmet.Stahlhelm_M-40",
+        "displayName": "Casque - Stahlhelm_M-40"
+      }
+    ]
+}

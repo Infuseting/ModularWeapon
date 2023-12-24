@@ -1,0 +1,72 @@
+.home {
+    background-image: url("modularwarfare:textures/gui/background.png");
+    width: 1920px;
+    height: 1080px;
+}
+
+.join {
+
+    top: 55%;
+    left: 100px;
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 512px;
+    height: 6%;
+    text-align: center;
+    text-align-vertical: center;
+    font-size: 30px;
+    color : white;
+    }
+
+.join:hover {
+    background-image: url("modularwarfare:textures/gui/boutonpress.png");
+    color : black;
+}
+
+.settings {
+    top: 65%;
+    left: 100px;
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 512px;
+    height: 6%;
+    text-align: center;
+    text-align-vertical: center;
+    font-size: 30px;
+    color : white;
+}
+
+.settings:hover {
+    background-image: url("modularwarfare:textures/gui/boutonpress.png");
+    color : black;
+}
+.exit {
+    top: 75%;
+    left: 100px;
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 512px;
+    height: 6%;
+    text-align: center;
+    text-align-vertical: center;
+    font-size: 30px;
+    color : white;
+}
+
+.exit:hover {
+    background-image: url("modularwarfare:textures/gui/boutonpress.png");
+    color : black;
+}
+.solo {
+    top: 50%;
+    left: 35%;
+    background-image: url("modularwarfare:textures/gui/bouton.png");
+    width: 30%;
+    height: 6%;
+    text-align: center;
+    text-align-vertical: center;
+    font-size: 30px;
+    color : white;
+    }
+
+.solo:hover {
+    background-image: url("modularwarfare:textures/gui/boutonpress.png");
+    color : black;
+}

@@ -1,0 +1,25 @@
+{
+  "internalName": "prototype.12_70Gauge.Piranha",
+  "maxStackSize": 20,
+  "displayName": "12/70 Piranha",
+  "renderBulletModel": true,
+  "shellSound": "casing_gauge",
+  "shellModelFileName": "12gauge.obj",
+  "NumberBullet": 10,
+  
+  "DamagePerBellet": 25,
+  "Penetration": 24,
+  "ArmorDamage": 22,
+  "Precision": -5,
+  "recul": 0,
+  "HemoragieLeger": 15,
+  "HemoragieLourd": 15,
+  "BulletIn": 2,
+  "Efficacite1": 6,
+  "Efficacite2":6,
+  "Efficacite3":5,
+  "Efficacite4":4,
+  "Efficacite5":4,
+  "Efficacite6":4
+  
+}
